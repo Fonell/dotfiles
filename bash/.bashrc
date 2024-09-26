@@ -28,3 +28,4 @@ eval "$(fzf --bash)"
 eval "$(zoxide init bash)"
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+. "$HOME/.cargo/env"
