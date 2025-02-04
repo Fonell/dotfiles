@@ -23,8 +23,9 @@ fi
 PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ '
 
 export PATH="${PATH:+${PATH}:}/home/user/.local/bin"
-export DISPLAY=$(grep -m 1 nameserver /etc/resolv.conf | awk '{print $2}'):0.0
+export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}'):0.0
 
 eval "$(zoxide init bash)"
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 eval "$(fzf --bash)"
+. "$HOME/.cargo/env"
