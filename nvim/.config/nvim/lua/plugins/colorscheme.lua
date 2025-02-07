@@ -1,12 +1,12 @@
 return {
-	{ "Mofiqul/vscode.nvim" },
-	{ "AlexvZyl/nordic.nvim" },
+  { "Mofiqul/vscode.nvim" },
+  { "AlexvZyl/nordic.nvim" },
 
-	-- Configure LazyVim to load gruvbox
-	{
-		"LazyVim/LazyVim",
-		opts = {
-			colorscheme = "nordic",
-		},
-	},
+  -- Configure LazyVim to load gruvbox
+  {
+    "LazyVim/LazyVim",
+    opts = {
+      colorscheme = "vscode",
+    },
+  },
 }
