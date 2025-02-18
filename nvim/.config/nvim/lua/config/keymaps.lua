@@ -16,10 +16,6 @@ map({ "v", "n" }, "<A-Up>", ":m '<-2<CR>gv=gv", { silent = true, desc = "Move bl
 map("n", "<A-Down>", ":m .+1<CR>==", { silent = true, desc = "Move line down" })
 map("n", "<A-Up>", ":m .-2<CR>==", { silent = true, desc = "Move line up" })
 
--- Center the screen after scrolling up/down with Ctrl-u/d
-map("n", "<C-u>", "<C-u>zz")
-map("n", "<C-d>", "<C-d>zz")
-
 -- Paste in visual mode without yanking replaced text
 map("x", "p", [["_dP]])
 
