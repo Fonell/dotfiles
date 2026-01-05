@@ -133,12 +133,23 @@ install_ripgrep_fd() {
   else
     sudo apt-get install -y ripgrep
   fi
+
   if is_cmd_installed fd; then
     echo "✔️ fd already installed."
   else
-    sudo apt-get install -y fd-find
-    if ! command -v fd &>/dev/null; then
-      sudo ln -s "$(which fdfind)" /usr/local/bin/fd
+    # Install latest fd from GitHub releases
+    FD_VERSION=$(curl -s "https://api.github.com/repos/sharkdp/fd/releases/latest" |
+      grep -Po '"tag_name": "v\K[0-9.]+')
+
+    curl -Lo /tmp/fd.deb \
+      "https://github.com/sharkdp/fd/releases/latest/download/fd_${FD_VERSION}_amd64.deb"
+
+    sudo apt-get install -y /tmp/fd.deb
+    rm -f /tmp/fd.deb
+
+    # Ensure `fd` is on PATH (GitHub .deb already uses `fd` as the binary name).[web:7]
+    if ! command -v fd >/dev/null 2>&1; then
+      echo "fd installed but not on PATH"
     fi
   fi
 }
