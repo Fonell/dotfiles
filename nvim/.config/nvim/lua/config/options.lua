@@ -3,4 +3,25 @@
 -- Add any additional options here
 
 vim.opt.swapfile = false
-vim.o.diffopt = "internal,filler,closeoff,linematch:60"
+
+-- Use OSC52 for clipboard (works natively with WezTerm over SSH/WSL)
+vim.o.clipboard = "unnamedplus"
+
+local function paste()
+	return {
+		vim.fn.split(vim.fn.getreg(""), "\n"),
+		vim.fn.getregtype(""),
+	}
+end
+
+vim.g.clipboard = {
+	name = "OSC 52",
+	copy = {
+		["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+		["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+	},
+	paste = {
+		["+"] = paste,
+		["*"] = paste,
+	},
+}

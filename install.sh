@@ -104,18 +104,6 @@ install_lazyvim() {
   fi
 }
 
-install_tmux_tpm() {
-  if is_cmd_installed tmux; then
-    echo "✔️ tmux already installed."
-  else
-    sudo apt-get install -y tmux
-  fi
-  if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
-    git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
-  else
-    echo "✔️ TPM already installed."
-  fi
-}
 
 install_zoxide() {
   if is_cmd_installed zoxide; then
@@ -217,7 +205,6 @@ main() {
   run_step "Install build dependencies" install_build_deps
   run_step "Install Neovim from source" install_neovim
   run_step "Install LazyVim configuration" install_lazyvim
-  run_step "Install tmux and TPM" install_tmux_tpm
   run_step "Install zoxide" install_zoxide
   run_step "Install ripgrep and fd" install_ripgrep_fd
   run_step "Install Homebrew and fzf" install_brew_fzf
@@ -230,8 +217,8 @@ main() {
   echo "Log saved at: $LOGFILE"
   echo ""
   echo "⚠️ Reminder for Windows users:"
-  echo "  - Install win32yank for clipboard support in Neovim + tmux."
-  echo "  - Set Windows Terminal font to JetBrainsMono Nerd Font."
+  echo "  - Set WezTerm font to JetBrainsMono Nerd Font."
+  echo "  - Clipboard uses OSC52 — no extra tools needed."
   echo ""
   echo "Please restart your shell or run: source ~/.bashrc (or appropriate shell config)"
   echo ""
