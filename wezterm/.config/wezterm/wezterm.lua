@@ -7,12 +7,14 @@ config.default_prog = { "wsl.exe", "--cd", "~", "--exec", "/bin/bash", "-l" }
 -- General
 config.font_size = 13
 config.font = wezterm.font("JetBrains Mono")
-config.color_scheme = "tokyonight_night"
+config.color_scheme = "Vs Code Dark+ (Gogh)"
 config.window_close_confirmation = "NeverPrompt"
 config.audible_bell = "Disabled"
 
 config.window_decorations = "RESIZE"
 config.enable_tab_bar = true
+config.hide_tab_bar_if_only_one_tab = false
+config.use_fancy_tab_bar = false
 
 -- Key bindings
 config.keys = {
@@ -24,7 +26,7 @@ config.keys = {
 	{ key = "z", mods = "ALT", action = wezterm.action.TogglePaneZoomState },
 
 	-- Tabs: open, close, navigate, rename
-	{ key = "t", mods = "ALT", action = wezterm.action.SpawnTab("CurrentPaneDomain") },
+	{ key = "c", mods = "ALT", action = wezterm.action.SpawnTab("CurrentPaneDomain") },
 	{ key = "w", mods = "ALT", action = wezterm.action.CloseCurrentTab({ confirm = false }) },
 	{
 		key = ",",
