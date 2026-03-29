@@ -5,7 +5,9 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 
-alias ll='ls -alFh --color=auto --time-style=long-iso'
+alias ls='eza --icons'
+alias ll='eza -alF --icons --time-style=long-iso --git'
 
 alias n='nvim'
 alias c='clear'
+alias cd='z'

@@ -142,6 +142,21 @@ install_ripgrep_fd() {
   fi
 }
 
+install_eza() {
+  if is_cmd_installed eza; then
+    echo "✔️ eza already installed."
+  else
+    EZA_VERSION=$(curl -s "https://api.github.com/repos/eza-community/eza/releases/latest" |
+      grep -Po '"tag_name": "v\K[0-9.]+')
+
+    curl -Lo /tmp/eza.deb \
+      "https://github.com/eza-community/eza/releases/latest/download/eza_${EZA_VERSION}_amd64.deb"
+
+    sudo apt-get install -y /tmp/eza.deb
+    rm -f /tmp/eza.deb
+  fi
+}
+
 install_brew_fzf() {
   if is_cmd_installed brew; then
     echo "✔️ Homebrew already installed."
@@ -207,6 +222,7 @@ main() {
   run_step "Install LazyVim configuration" install_lazyvim
   run_step "Install zoxide" install_zoxide
   run_step "Install ripgrep and fd" install_ripgrep_fd
+  run_step "Install eza" install_eza
   run_step "Install Homebrew and fzf" install_brew_fzf
   run_step "Install Lazygit" install_lazygit
   run_step "Install wslu (wslview)" install_wslu
