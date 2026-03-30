@@ -32,6 +32,8 @@ unset color_prompt force_color_prompt
 export PATH="${PATH:+${PATH}:}/home/user/.local/bin"
 export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}'):0.0
 export AWS_PROFILE=dev
+export EDITOR=vim
+export VISUAL=vim
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 eval "$(fzf --bash)"
