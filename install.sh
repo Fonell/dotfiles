@@ -88,10 +88,11 @@ install_neovim() {
     if [ ! -d "$HOME/neovim" ]; then
       git clone https://github.com/neovim/neovim.git "$HOME/neovim"
     fi
-    cd "$HOME/neovim"
-    make CMAKE_BUILD_TYPE=RelWithDebInfo
-    sudo make install
-    cd ~
+    (
+      cd "$HOME/neovim"
+      make CMAKE_BUILD_TYPE=RelWithDebInfo
+      sudo make install
+    )
   fi
 }
 
@@ -183,10 +184,10 @@ install_lazygit() {
   else
     local version
     version=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")')
-    curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${version#v}_Linux_x86_64.tar.gz"
-    tar xf lazygit.tar.gz lazygit
-    sudo install lazygit /usr/local/bin
-    rm lazygit lazygit.tar.gz
+    curl -Lo /tmp/lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${version#v}_Linux_x86_64.tar.gz"
+    tar xf /tmp/lazygit.tar.gz -C /tmp lazygit
+    sudo install /tmp/lazygit /usr/local/bin
+    rm -f /tmp/lazygit /tmp/lazygit.tar.gz
   fi
 }
 
@@ -214,8 +215,13 @@ install_stow_dotfiles() {
   fi
 
   cd "$dotfiles_dir"
-  stow --adopt */
-  git restore .
+  # Remove existing files that would conflict, then stow cleanly
+  for dir in */; do
+    stow -n "$dir" 2>&1 | grep -oP '(?<=existing target is not owned by stow: ).*' | while read -r conflict; do
+      rm -f "$HOME/$conflict"
+    done
+  done
+  stow */
   cd ~
 }
 
