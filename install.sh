@@ -14,7 +14,12 @@ draw_header() {
   printf "%*s\n\n" $(((${#title} + width) / 2)) "$(printf '%.0s=' $(seq 1 ${#title}))"
 }
 
+SKIP_PAUSES="false"
+
 pause() {
+  if [ "$SKIP_PAUSES" = "true" ]; then
+    return
+  fi
   echo ""
   echo -n "➡️  Press Enter to continue..."
   read -r
@@ -227,33 +232,178 @@ install_stow_dotfiles() {
   for dir in */; do
     stow -n "$dir" 2>&1 | grep -oP '(?<=existing target is not owned by stow: ).*' | while read -r conflict; do
       rm -f "$HOME/$conflict"
-    done
+    done || true
   done
   stow */
   cd ~
 }
 
-main() {
-  run_step "Update and upgrade system packages" update_system
-  run_step "Check and upgrade git if needed" check_and_update_git
-  run_step "Install build dependencies" install_build_deps
-  run_step "Install Neovim from source" install_neovim
-  run_step "Install LazyVim configuration" install_lazyvim
-  run_step "Install tmux and TPM" install_tmux_tpm
-  run_step "Install zoxide" install_zoxide
-  run_step "Install ripgrep and fd" install_ripgrep_fd
-  run_step "Install eza" install_eza
-  run_step "Install Homebrew and fzf" install_brew_fzf
-  run_step "Install starship prompt" install_starship
-  run_step "Install Lazygit" install_lazygit
-  run_step "Install wslu (wslview)" install_wslu
-  run_step "Install stow and apply dotfiles" install_stow_dotfiles
+declare -A STEPS=(
+  [system]="Update and upgrade system packages"
+  [git]="Check and upgrade git if needed"
+  [build_deps]="Install build dependencies"
+  [neovim]="Install Neovim from source"
+  [lazyvim]="Install LazyVim configuration"
+  [tmux]="Install tmux and TPM"
+  [zoxide]="Install zoxide"
+  [ripgrep_fd]="Install ripgrep and fd"
+  [eza]="Install eza"
+  [brew_fzf]="Install Homebrew and fzf"
+  [starship]="Install starship prompt"
+  [lazygit]="Install Lazygit"
+  [wslu]="Install wslu (wslview)"
+  [stow]="Install stow and apply dotfiles"
+)
 
-  draw_header "✅ Development environment setup completed!"
+STEP_ORDER=(system git build_deps neovim lazyvim tmux zoxide ripgrep_fd eza brew_fzf starship lazygit wslu stow)
+
+declare -A STEP_FUNCS=(
+  [system]=update_system
+  [git]=check_and_update_git
+  [build_deps]=install_build_deps
+  [neovim]=install_neovim
+  [lazyvim]=install_lazyvim
+  [tmux]=install_tmux_tpm
+  [zoxide]=install_zoxide
+  [ripgrep_fd]=install_ripgrep_fd
+  [eza]=install_eza
+  [brew_fzf]=install_brew_fzf
+  [starship]=install_starship
+  [lazygit]=install_lazygit
+  [wslu]=install_wslu
+  [stow]=install_stow_dotfiles
+)
+
+show_checklist_dialog() {
+  local checklist_args=()
+  for key in "${STEP_ORDER[@]}"; do
+    checklist_args+=("$key" "${STEPS[$key]}" "on")
+  done
+
+  local choices
+  choices=$(dialog --stdout --checklist "Select components to install:" 22 60 14 "${checklist_args[@]}")
+  local exit_code=$?
+
+  clear
+  if [ $exit_code -ne 0 ]; then
+    echo "Installation cancelled."
+    exit 0
+  fi
+  echo "$choices"
+}
+
+show_checklist_fallback() {
+  local selected=()
+  local states=()
+  local skip_pauses="off"
+  for key in "${STEP_ORDER[@]}"; do
+    states+=("on")
+  done
+
+  while true; do
+    clear >/dev/tty
+    echo "" >/dev/tty
+    echo "  Select components to install (toggle with number, Enter to confirm):" >/dev/tty
+    echo "  ==================================================================" >/dev/tty
+    echo "" >/dev/tty
+    for i in "${!STEP_ORDER[@]}"; do
+      local key="${STEP_ORDER[$i]}"
+      local mark="[x]"
+      if [ "${states[$i]}" = "off" ]; then
+        mark="[ ]"
+      fi
+      printf "    %2d) %s %s\n" $((i + 1)) "$mark" "${STEPS[$key]}" >/dev/tty
+    done
+    echo "" >/dev/tty
+    local skip_mark="[ ]"
+    if [ "$skip_pauses" = "on" ]; then skip_mark="[x]"; fi
+    echo "     s) $skip_mark Skip pauses between steps" >/dev/tty
+    echo "" >/dev/tty
+    echo "    a) Toggle all    Enter) Confirm selection    q) Quit" >/dev/tty
+    echo "" >/dev/tty
+    read -rp "  > " input </dev/tty >/dev/tty
+
+    if [ -z "$input" ]; then
+      break
+    elif [ "$input" = "q" ]; then
+      echo "Installation cancelled." >/dev/tty
+      exit 0
+    elif [ "$input" = "s" ]; then
+      if [ "$skip_pauses" = "on" ]; then
+        skip_pauses="off"
+      else
+        skip_pauses="on"
+      fi
+    elif [ "$input" = "a" ]; then
+      local any_on="false"
+      for state in "${states[@]}"; do
+        if [ "$state" = "on" ]; then any_on="true"; break; fi
+      done
+      local new_state="on"
+      if [ "$any_on" = "true" ]; then new_state="off"; fi
+      for i in "${!states[@]}"; do
+        states[$i]="$new_state"
+      done
+    elif [[ "$input" =~ ^[0-9]+$ ]] && [ "$input" -ge 1 ] && [ "$input" -le ${#STEP_ORDER[@]} ]; then
+      local idx=$((input - 1))
+      if [ "${states[$idx]}" = "on" ]; then
+        states[$idx]="off"
+      else
+        states[$idx]="on"
+      fi
+    fi
+  done
+
+  selected=()
+  for i in "${!STEP_ORDER[@]}"; do
+    if [ "${states[$i]}" = "on" ]; then
+      selected+=("${STEP_ORDER[$i]}")
+    fi
+  done
+
+  if [ "$skip_pauses" = "on" ]; then
+    echo "SKIP_PAUSES ${selected[*]}"
+  else
+    echo "${selected[*]}"
+  fi
+}
+
+show_checklist() {
+  if command -v dialog >/dev/null 2>&1; then
+    show_checklist_dialog
+  else
+    show_checklist_fallback
+  fi
+}
+
+main() {
+  local selected
+  selected=$(show_checklist)
+
+  if [ -z "$selected" ]; then
+    echo "Nothing selected. Exiting."
+    exit 0
+  fi
+
+  # Check for skip pauses flag
+  if [[ "$selected" == SKIP_PAUSES* ]]; then
+    SKIP_PAUSES="true"
+    selected="${selected#SKIP_PAUSES }"
+  fi
+
+  for key in ${selected//\"/}; do
+    run_step "${STEPS[$key]}" "${STEP_FUNCS[$key]}"
+  done
+
+  clear
+  echo ""
+  echo "========================================="
+  echo "  Installation finished!"
+  echo "========================================="
   echo ""
   echo "Log saved at: $LOGFILE"
   echo ""
-  echo "⚠️ Reminder for Windows users:"
+  echo "Reminder for Windows users:"
   echo "  - Install win32yank for clipboard support in Neovim + tmux."
   echo "  - Set Windows Terminal font to JetBrainsMono Nerd Font."
   echo ""
