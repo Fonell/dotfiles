@@ -178,6 +178,14 @@ install_starship() {
   fi
 }
 
+install_eza() {
+  if is_cmd_installed eza; then
+    echo "✔️ eza already installed."
+  else
+    sudo apt-get install -y eza
+  fi
+}
+
 install_lazygit() {
   if is_cmd_installed lazygit; then
     echo "✔️ Lazygit already installed."
@@ -234,6 +242,7 @@ main() {
   run_step "Install tmux and TPM" install_tmux_tpm
   run_step "Install zoxide" install_zoxide
   run_step "Install ripgrep and fd" install_ripgrep_fd
+  run_step "Install eza" install_eza
   run_step "Install Homebrew and fzf" install_brew_fzf
   run_step "Install starship prompt" install_starship
   run_step "Install Lazygit" install_lazygit
