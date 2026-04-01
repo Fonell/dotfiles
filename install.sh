@@ -169,6 +169,14 @@ install_brew_fzf() {
   fi
 }
 
+install_starship() {
+  if is_cmd_installed starship; then
+    echo "✔️ starship already installed."
+  else
+    brew install starship
+  fi
+}
+
 install_lazygit() {
   if is_cmd_installed lazygit; then
     echo "✔️ Lazygit already installed."
@@ -221,6 +229,7 @@ main() {
   run_step "Install zoxide" install_zoxide
   run_step "Install ripgrep and fd" install_ripgrep_fd
   run_step "Install Homebrew and fzf" install_brew_fzf
+  run_step "Install starship prompt" install_starship
   run_step "Install Lazygit" install_lazygit
   run_step "Install wslu (wslview)" install_wslu
   run_step "Install stow and apply dotfiles" install_stow_dotfiles
