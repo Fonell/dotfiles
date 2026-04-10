@@ -11,8 +11,8 @@ map({ "i", "n", "v" }, "<S-Left>", "<cmd>TmuxResizeLeft<cr><esc>", { desc = "Res
 map({ "i", "n", "v" }, "<S-Right>", "<cmd>TmuxResizeRight<cr><esc>", { desc = "Resize pane Right" })
 
 -- Move blocks of text up/down in visual and normal modes
-map({ "v", "n" }, "<A-Down>", ":m '>+1<CR>gv=gv", { silent = true, desc = "Move block down" })
-map({ "v", "n" }, "<A-Up>", ":m '<-2<CR>gv=gv", { silent = true, desc = "Move block up" })
+map("v", "<A-Down>", ":m '>+1<CR>gv=gv", { silent = true, desc = "Move block down" })
+map("v", "<A-Up>", ":m '<-2<CR>gv=gv", { silent = true, desc = "Move block up" })
 map("n", "<A-Down>", ":m .+1<CR>==", { silent = true, desc = "Move line down" })
 map("n", "<A-Up>", ":m .-2<CR>==", { silent = true, desc = "Move line up" })
 

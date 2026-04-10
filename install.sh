@@ -278,7 +278,7 @@ declare -A STEPS=(
   [stow]="Install stow and apply dotfiles"
 )
 
-STEP_ORDER=(system git build_deps neovim lazyvim tmux zoxide ripgrep_fd eza brew_fzf starship lazygit wslu docker lazydocker stow)
+STEP_ORDER=(system git build_deps brew_fzf neovim lazyvim tmux zoxide ripgrep_fd eza starship lazygit wslu docker lazydocker stow)
 
 declare -A STEP_FUNCS=(
   [system]=update_system
