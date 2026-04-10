@@ -114,7 +114,7 @@ install_tmux_tpm() {
   if is_cmd_installed tmux; then
     echo "✔️ tmux already installed."
   else
-    sudo apt-get install -y tmux
+    brew install tmux
   fi
   if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
     git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
@@ -127,7 +127,7 @@ install_zoxide() {
   if is_cmd_installed zoxide; then
     echo "✔️ zoxide already installed."
   else
-    curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
+    brew install zoxide
   fi
 
   echo "⚠️ Note: Please configure your shell initialization (e.g. in dotfiles) to enable zoxide integration."
@@ -137,26 +137,13 @@ install_ripgrep_fd() {
   if is_cmd_installed rg; then
     echo "✔️ ripgrep already installed."
   else
-    sudo apt-get install -y ripgrep
+    brew install ripgrep
   fi
 
   if is_cmd_installed fd; then
     echo "✔️ fd already installed."
   else
-    # Install latest fd from GitHub releases
-    FD_VERSION=$(curl -s "https://api.github.com/repos/sharkdp/fd/releases/latest" |
-      grep -Po '"tag_name": "v\K[0-9.]+')
-
-    curl -Lo /tmp/fd.deb \
-      "https://github.com/sharkdp/fd/releases/latest/download/fd_${FD_VERSION}_amd64.deb"
-
-    sudo apt-get install -y /tmp/fd.deb
-    rm -f /tmp/fd.deb
-
-    # Ensure `fd` is on PATH (GitHub .deb already uses `fd` as the binary name).[web:7]
-    if ! command -v fd >/dev/null 2>&1; then
-      echo "fd installed but not on PATH"
-    fi
+    brew install fd
   fi
 }
 
@@ -187,7 +174,7 @@ install_eza() {
   if is_cmd_installed eza; then
     echo "✔️ eza already installed."
   else
-    sudo apt-get install -y eza
+    brew install eza
   fi
 }
 
@@ -195,12 +182,7 @@ install_lazygit() {
   if is_cmd_installed lazygit; then
     echo "✔️ Lazygit already installed."
   else
-    local version
-    version=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")')
-    curl -Lo /tmp/lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${version#v}_Linux_x86_64.tar.gz"
-    tar xf /tmp/lazygit.tar.gz -C /tmp lazygit
-    sudo install /tmp/lazygit /usr/local/bin
-    rm -f /tmp/lazygit /tmp/lazygit.tar.gz
+    brew install lazygit
   fi
 }
 
@@ -209,6 +191,45 @@ install_wslu() {
     echo "✔️ wslview already installed."
   else
     sudo apt-get install -y wslu
+  fi
+}
+
+install_docker() {
+  if is_cmd_installed docker; then
+    echo "✔️ Docker already installed."
+    return
+  fi
+
+  curl -fsSL https://get.docker.com | sudo sh
+  sudo usermod -aG docker "$USER"
+
+  if grep -qs "systemd=true" /etc/wsl.conf; then
+    sudo systemctl enable --now docker
+    echo "✔️ Docker service enabled via systemd."
+  else
+    if ! grep -q "dockerd" "$HOME/.bashrc"; then
+      cat >>"$HOME/.bashrc" <<'EOF'
+
+# Auto-start Docker daemon in WSL (no systemd)
+if [ -z "$(pgrep dockerd)" ]; then
+    sudo dockerd > /dev/null 2>&1 &
+fi
+EOF
+    fi
+    echo "⚠️  systemd not enabled. Added dockerd auto-start to ~/.bashrc."
+    echo "    For a cleaner setup, add to /etc/wsl.conf and run 'wsl --shutdown':"
+    echo "      [boot]"
+    echo "      systemd=true"
+  fi
+
+  echo "✔️ Docker installed. Run 'newgrp docker' or re-login for group changes to take effect."
+}
+
+install_lazydocker() {
+  if is_cmd_installed lazydocker; then
+    echo "✔️ Lazydocker already installed."
+  else
+    brew install jesseduffield/lazydocker/lazydocker
   fi
 }
 
@@ -252,10 +273,12 @@ declare -A STEPS=(
   [starship]="Install starship prompt"
   [lazygit]="Install Lazygit"
   [wslu]="Install wslu (wslview)"
+  [docker]="Install Docker Engine (no Docker Desktop)"
+  [lazydocker]="Install Lazydocker"
   [stow]="Install stow and apply dotfiles"
 )
 
-STEP_ORDER=(system git build_deps neovim lazyvim tmux zoxide ripgrep_fd eza brew_fzf starship lazygit wslu stow)
+STEP_ORDER=(system git build_deps neovim lazyvim tmux zoxide ripgrep_fd eza brew_fzf starship lazygit wslu docker lazydocker stow)
 
 declare -A STEP_FUNCS=(
   [system]=update_system
@@ -271,6 +294,8 @@ declare -A STEP_FUNCS=(
   [starship]=install_starship
   [lazygit]=install_lazygit
   [wslu]=install_wslu
+  [docker]=install_docker
+  [lazydocker]=install_lazydocker
   [stow]=install_stow_dotfiles
 )
 
