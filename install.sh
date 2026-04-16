@@ -184,6 +184,11 @@ install_lazygit() {
   else
     brew install lazygit
   fi
+  if is_cmd_installed delta; then
+    echo "✔️ delta already installed."
+  else
+    brew install git-delta
+  fi
 }
 
 install_wslu() {
