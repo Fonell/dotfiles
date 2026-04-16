@@ -3,4 +3,4 @@
 -- Add any additional options here
 
 vim.opt.swapfile = false
-vim.o.diffopt = "internal,filler,closeoff,linematch:60"
+vim.opt.diffopt:append({ "algorithm:histogram", "indent-heuristic" })
