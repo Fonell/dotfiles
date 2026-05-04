@@ -64,6 +64,7 @@ gh_bin zoxide     ajeetdsouza/zoxide        "zoxide-[0-9.]+-${ARCH}-unknown-linu
 gh_bin fzf        junegunn/fzf             "fzf-[0-9.]+-linux_${ARCH_DEB}\.tar\.gz"
 gh_bin lazygit    jesseduffield/lazygit    "lazygit_[0-9.]+_[Ll]inux_${ARCH_GO}\.tar\.gz"
 gh_bin lazydocker jesseduffield/lazydocker "lazydocker_[0-9.]+_Linux_${ARCH_GO}\.tar\.gz"
+gh_bin delta      dandavison/delta         "delta-[0-9.]+-${ARCH}-unknown-linux-musl\.tar\.gz"
 gh_bin gh         cli/cli                  "gh_[0-9.]+_linux_${ARCH_DEB}\.tar\.gz"
 
 step "Installing Docker"
