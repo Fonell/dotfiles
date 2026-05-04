@@ -38,10 +38,8 @@ sudo apt-get upgrade -y
 sudo apt-get dist-upgrade -y
 
 step "Installing apt packages"
-sudo add-apt-repository -y ppa:zhangsongcui3371/fastfetch
-sudo apt-get update -y
 sudo apt install -y git-all curl stow tmux ripgrep wslu \
-  ninja-build gettext cmake unzip build-essential fastfetch
+  ninja-build gettext cmake unzip build-essential
 
 step "Installing neovim"
 [[ -d ~/neovim ]] || git clone https://github.com/neovim/neovim.git ~/neovim
@@ -91,5 +89,3 @@ echo
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  ✓ Done! Restart your shell or run: source ~/.bashrc"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo
-fastfetch
