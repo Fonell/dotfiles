@@ -14,8 +14,8 @@
 | neovim                                                  | built from source                 |
 | LazyVim                                                 | git clone → `~/.config/nvim`      |
 | tmux TPM                                                | git clone → `~/.tmux/plugins/tpm` |
-| Homebrew                                                | official install script           |
-| eza, lazygit, lazydocker, starship, fd, fzf, zoxide, gh | brew                              |
+| starship                                                | official install script           |
+| eza, fd, zoxide, fzf, lazygit, lazydocker, gh           | GitHub releases (static binaries) |
 | Docker                                                  | get.docker.com                    |
 | dotfiles                                                | stow                              |
 

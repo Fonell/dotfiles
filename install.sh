@@ -8,6 +8,22 @@ if [[ "$(lsb_release -rs 2>/dev/null)" != 24.* ]]; then
   [[ "$confirm" =~ ^[Yy]$ ]] || exit 1
 fi
 
+is_cmd() { command -v "$1" &>/dev/null; }
+
+ARCH=$(uname -m)                                                    # x86_64 or aarch64
+ARCH_GO=${ARCH/aarch64/arm64}                                       # x86_64 or arm64
+ARCH_DEB=${ARCH/x86_64/amd64}; ARCH_DEB=${ARCH_DEB/aarch64/arm64}  # amd64 or arm64
+
+gh_bin() {
+  is_cmd "$1" && return
+  local url; url=$(curl -fsSL "https://api.github.com/repos/$2/releases/latest" \
+    | grep -Po '"browser_download_url":\s*"\K[^"]+' | grep -E "$3" | head -1)
+  local tmp; tmp=$(mktemp -d)
+  curl -fsSL "$url" | tar -xz -C "$tmp"
+  sudo find "$tmp" -maxdepth 4 -name "$1" -type f -exec install -m755 {} /usr/local/bin/ \;
+  rm -rf "$tmp"
+}
+
 step() {
   echo
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -40,13 +56,15 @@ step "Installing LazyVim"
 step "Installing tmux TPM"
 [[ -d ~/.tmux/plugins/tpm ]] || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
-step "Installing Homebrew"
-[[ -f /home/linuxbrew/.linuxbrew/bin/brew ]] || \
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
-step "Installing brew packages"
-brew install eza lazygit jesseduffield/lazydocker/lazydocker starship fd fzf zoxide gh
+step "Installing CLI tools"
+is_cmd starship    || curl -sS https://starship.rs/install.sh | sh -s -- -y
+gh_bin eza        eza-community/eza         "eza_${ARCH}-unknown-linux-musl\.tar\.gz"
+gh_bin fd         sharkdp/fd               "fd-v[0-9.]+-${ARCH}-unknown-linux-musl\.tar\.gz"
+gh_bin zoxide     ajeetdsouza/zoxide        "zoxide-[0-9.]+-${ARCH}-unknown-linux-musl\.tar\.gz"
+gh_bin fzf        junegunn/fzf             "fzf-[0-9.]+-linux_${ARCH_DEB}\.tar\.gz"
+gh_bin lazygit    jesseduffield/lazygit    "lazygit_[0-9.]+_[Ll]inux_${ARCH_GO}\.tar\.gz"
+gh_bin lazydocker jesseduffield/lazydocker "lazydocker_[0-9.]+_Linux_${ARCH_GO}\.tar\.gz"
+gh_bin gh         cli/cli                  "gh_[0-9.]+_linux_${ARCH_DEB}\.tar\.gz"
 
 step "Installing Docker"
 [[ -f /usr/bin/docker ]] || {
