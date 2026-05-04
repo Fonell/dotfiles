@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Verify Ubuntu 24
+if [[ "$(lsb_release -rs 2>/dev/null)" != 24.* ]]; then
+  echo "warning: Ubuntu 24 recommended (found: $(lsb_release -ds 2>/dev/null))" >&2
+  read -rp "  Continue anyway? [y/N] " confirm
+  [[ "$confirm" =~ ^[Yy]$ ]] || exit 1
+fi
+
 step() {
   echo
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -15,8 +22,10 @@ sudo apt-get upgrade -y
 sudo apt-get dist-upgrade -y
 
 step "Installing apt packages"
+sudo add-apt-repository -y ppa:zhangsongcui3371/fastfetch
+sudo apt-get update -y
 sudo apt install -y git-all curl stow tmux ripgrep wslu \
-  ninja-build gettext cmake unzip build-essential
+  ninja-build gettext cmake unzip build-essential fastfetch
 
 step "Installing neovim"
 [[ -d ~/neovim ]] || git clone https://github.com/neovim/neovim.git ~/neovim
@@ -64,3 +73,4 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "  ✓ Done! Restart your shell or run: source ~/.bashrc"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo
+fastfetch
