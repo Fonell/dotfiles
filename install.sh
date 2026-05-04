@@ -46,7 +46,7 @@ step "Installing Docker"
 }
 
 step "GitHub auth"
-gh auth login
+gh auth status &>/dev/null || gh auth login
 
 step "Applying dotfiles"
 [[ -d ~/dotfiles ]] || {
