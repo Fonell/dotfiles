@@ -55,12 +55,8 @@ step "Applying dotfiles"
 }
 (
   cd ~/dotfiles
-  for dir in */; do
-    stow -n "$dir" 2>&1 |
-      grep -oP '(?<=existing target is not owned by stow: ).*' |
-      xargs -I{} rm -f ~/{} 2>/dev/null || true
-  done
-  stow */
+  stow --adopt */
+  git restore .
 )
 
 echo

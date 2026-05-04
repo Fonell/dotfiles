@@ -35,3 +35,5 @@ systemd=true
 **Neovim** — built from source, takes several minutes.
 
 **Shell** — restart your shell or run `source ~/.bashrc` after the script completes.
+
+**Font** — install [Hack Nerd Font](https://www.nerdfonts.com/font-downloads) and set it in your terminal emulator for icons and powerline symbols to render correctly.
