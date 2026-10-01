@@ -1,39 +1,18 @@
 # Dotfiles
 
+## Tools
+
+- git, tmux, neovim, ripgrep, fd, fzf (0.48+), zoxide, starship, eza, lazygit, delta
+- build-essential, unzip (for LazyVim)
+- [Hack Nerd Font](https://www.nerdfonts.com/font-downloads) in your terminal
+
 ## Install
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://github.com/Fonell/dotfiles/raw/master/install.sh)"
+git clone https://github.com/LazyVim/starter ~/.config/nvim && rm -rf ~/.config/nvim/.git
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+git clone https://github.com/Fonell/dotfiles.git ~/dotfiles
+~/dotfiles/install.sh
 ```
 
-## What gets installed
-
-| Tool                                                    | Method                            |
-| ------------------------------------------------------- | --------------------------------- |
-| git, curl, stow, tmux, ripgrep, wslu                    | apt                               |
-| neovim                                                  | built from source                 |
-| LazyVim                                                 | git clone → `~/.config/nvim`      |
-| tmux TPM                                                | git clone → `~/.tmux/plugins/tpm` |
-| starship                                                | official install script           |
-| eza, fd, zoxide, fzf, lazygit, lazydocker, gh           | GitHub releases (static binaries) |
-| Docker                                                  | get.docker.com                    |
-| dotfiles                                                | stow                              |
-
-## Notes
-
-**Docker** — after install, re-login or run `newgrp docker` for group changes to take effect.
-If systemd is not enabled in WSL, start the daemon manually with `sudo dockerd`.
-To enable systemd, add to `/etc/wsl.conf` and run `wsl --shutdown`:
-
-```ini
-[boot]
-systemd=true
-```
-
-**GitHub auth** — the script runs `gh auth login` interactively. Complete the browser flow when prompted before the script continues to clone your dotfiles.
-
-**Neovim** — built from source, takes several minutes.
-
-**Shell** — restart your shell or run `source ~/.bashrc` after the script completes.
-
-**Font** — install [Hack Nerd Font](https://www.nerdfonts.com/font-downloads) and set it in your terminal emulator for icons and powerline symbols to render correctly.
+In tmux, press `prefix + I` to install plugins.

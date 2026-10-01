@@ -1,0 +1,24 @@
+[core]
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	dark = true
+	side-by-side = true
+	line-numbers = true
+	syntax-theme = Visual Studio Dark+
+	plus-style = syntax "#12261e"
+	plus-emph-style = syntax "#1a4a29"
+	minus-style = syntax "#25171c"
+	minus-emph-style = syntax "#6b2b2b"
+	line-numbers-plus-style = "#3fb950"
+	line-numbers-minus-style = "#f85149"
+	line-numbers-zero-style = "#6e7681"
+[init]
+	defaultBranch = main
+[push]
+	autoSetupRemote = true
+[pull]
+	rebase = true
+[diff]
+	algorithm = histogram
