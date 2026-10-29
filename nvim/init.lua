@@ -239,6 +239,14 @@ vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
     if vim.o.buftype ~= "nofile" then vim.cmd("checktime") end
   end,
 })
+-- Close help, quickfix and similar windows with q
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "help", "qf", "checkhealth", "gitsigns-blame" },
+  callback = function(args)
+    vim.bo[args.buf].buflisted = false
+    vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = args.buf, silent = true, desc = "Close Window" })
+  end,
+})
 -- Restore cursor position when reopening a file
 vim.api.nvim_create_autocmd("BufReadPost", {
   callback = function(args)
@@ -342,10 +350,13 @@ map(
 -- LSP
 -- ============================
 map("n", "gd", P("lsp_definitions"), { desc = "Goto Definition" })
+map("n", "gV", P("lsp_definitions", { confirm = "edit_vsplit" }), { desc = "Goto Definition in Vsplit" })
 map("n", "gr", P("lsp_references"), { nowait = true, desc = "References" })
 map("n", "gI", P("lsp_implementations"), { desc = "Goto Implementation" })
 map("n", "gy", P("lsp_type_definitions"), { desc = "Goto Type Definition" })
 map("n", "gD", vim.lsp.buf.declaration, { desc = "Goto Declaration" })
+map("n", "gai", P("lsp_incoming_calls"), { desc = "Calls Incoming" })
+map("n", "gao", P("lsp_outgoing_calls"), { desc = "Calls Outgoing" })
 map("n", "gK", vim.lsp.buf.signature_help, { desc = "Signature Help" })
 map("i", "<c-k>", vim.lsp.buf.signature_help, { desc = "Signature Help" })
 map({ "n", "x" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
@@ -378,6 +389,10 @@ map("n", "<leader>sb", P("lines"), { desc = "Buffer Lines" })
 map("n", "<leader>sh", P("help"), { desc = "Help Pages" })
 map("n", "<leader>sk", P("keymaps"), { desc = "Keymaps" })
 map("n", "<leader>sd", P("diagnostics"), { desc = "Diagnostics" })
+map("n", "<leader>sD", P("diagnostics_buffer"), { desc = "Buffer Diagnostics" })
+map("n", "<leader>sB", P("grep_buffers"), { desc = "Grep Open Buffers" })
+map("n", "<leader>sC", P("commands"), { desc = "Commands" })
+map("n", "<leader>sq", P("qflist"), { desc = "Quickfix List" })
 map("n", "<leader>sR", P("resume"), { desc = "Resume" })
 map("n", "<leader>ss", P("lsp_symbols"), { desc = "LSP Symbols" })
 map("n", "<leader>sS", P("lsp_workspace_symbols"), { desc = "LSP Workspace Symbols" })
@@ -395,8 +410,10 @@ map("n", "]h", gs("nav_hunk", "next"), { desc = "Next Hunk" })
 map("n", "[h", gs("nav_hunk", "prev"), { desc = "Prev Hunk" })
 map({ "n", "x" }, "<leader>ghs", ":Gitsigns stage_hunk<cr>", { desc = "Stage Hunk" })
 map({ "n", "x" }, "<leader>ghr", ":Gitsigns reset_hunk<cr>", { desc = "Reset Hunk" })
+map("n", "<leader>ghR", gs("reset_buffer"), { desc = "Reset Buffer" })
 map("n", "<leader>ghp", gs("preview_hunk_inline"), { desc = "Preview Hunk Inline" })
 map("n", "<leader>ghb", gs("blame_line", { full = true }), { desc = "Blame Line" })
+map("n", "<leader>ghB", gs("blame"), { desc = "Blame Buffer" })
 map("n", "<leader>ghd", gs("diffthis"), { desc = "Diff This" })
 map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<cr>", { desc = "Select Hunk" })
 
@@ -424,12 +441,14 @@ map("n", "<leader>tb", "<cmd>Gitsigns toggle_current_line_blame<cr>", { desc = "
 map("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Diagnostics (Trouble)" })
 map("n", "<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", { desc = "Buffer Diagnostics (Trouble)" })
 map("n", "<leader>cs", "<cmd>Trouble symbols toggle<cr>", { desc = "Symbols (Trouble)" })
+map("n", "<leader>cS", "<cmd>Trouble lsp toggle<cr>", { desc = "LSP References/Definitions (Trouble)" })
 map("n", "<leader>xQ", "<cmd>Trouble qflist toggle<cr>", { desc = "Quickfix List (Trouble)" })
 
 -- ============================
 -- OTHER
 -- ============================
 map("n", "<leader>e", function() Snacks.explorer() end, { desc = "Explorer" })
+map("n", "<leader>n", function() MiniNotify.show_history() end, { desc = "Notification History" })
 map({ "n", "x", "o" }, "s", function() require("flash").jump() end, { desc = "Flash" })
 map({ "n", "x", "o" }, "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
 map("n", "<leader>?", function() require("which-key").show({ global = false }) end, { desc = "Buffer Keymaps" })

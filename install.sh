@@ -7,6 +7,5 @@ ln -sf "$PWD/tmux.conf" ~/.tmux.conf
 ln -sf "$PWD/gitconfig" ~/.gitconfig
 ln -sf "$PWD/starship.toml" ~/.config/starship.toml
 ln -sf "$PWD/lazygit.yml" ~/.config/lazygit/config.yml
-ln -sf "$PWD/keymaps.lua" ~/.config/nvim/lua/config/keymaps.lua
-ln -sf "$PWD/options.lua" ~/.config/nvim/lua/config/options.lua
-ln -sf "$PWD/vim-tmux.lua" ~/.config/nvim/lua/plugins/vim-tmux.lua
+[ -d ~/.config/nvim ] && [ ! -L ~/.config/nvim ] && mv ~/.config/nvim ~/.config/nvim.bak
+ln -sfn "$PWD/nvim" ~/.config/nvim
