@@ -22,3 +22,6 @@
 	rebase = true
 [diff]
 	algorithm = histogram
+[user]
+	email = sebfon98@gmail.com
+	name = Fonell
