@@ -376,8 +376,6 @@ map("n", "<leader>cm", "<cmd>Mason<cr>", { desc = "Mason" })
 -- PICKER
 -- ============================
 map("n", "<leader><space>", P("files"), { desc = "Find Files" })
-map("n", "<leader>/", P("grep"), { desc = "Grep" })
-map("n", "<leader>,", P("buffers"), { desc = "Buffers" })
 map("n", "<leader>:", P("command_history"), { desc = "Command History" })
 map("n", "<leader>ff", P("files"), { desc = "Find Files" })
 map("n", "<leader>fr", P("recent"), { desc = "Recent" })
