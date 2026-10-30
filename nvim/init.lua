@@ -78,7 +78,7 @@ vim.cmd.packadd("nvim.undotree")
 -- ============================
 -- PLUGIN SETUP
 -- ============================
-require("vscode").setup({})
+require("vscode").setup({ transparent = true })
 vim.cmd.colorscheme("vscode")
 require("mini.icons").setup()
 MiniIcons.mock_nvim_web_devicons()
